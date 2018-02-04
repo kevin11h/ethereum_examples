@@ -1,5 +1,6 @@
 pragma solidity ^0.4.0;
 
+/// @title Voting with delegation.
 contract Ballot {
 
     // A struct for a single `Proposal`
@@ -24,7 +25,7 @@ contract Ballot {
     // a dynamically sized array of Proposal struct
     Proposal[] public proposals;
 
-    // Create a new ballot for each proposals with name `proposalNames`
+    /// Create a new ballot for each proposals with name `proposalNames`
     function Ballot(bytes32[] proposalNames) public {
         chairperson = msg.sender;
         voters[chairperson].weight = 1; // default vote weight is 1, fixed
@@ -90,6 +91,8 @@ contract Ballot {
         proposals[toProposal].voteCount += sender.weight;
     }
 
+    /// @dev Computes the winning proposal taking all
+    /// previous votes into account.
     function winningProposal() public view returns (uint _winningProposal) {
         // use larger uint here since we may have a lot of voters, billion and trillions, etc.
         // this is million+ times more than the population on earth.
