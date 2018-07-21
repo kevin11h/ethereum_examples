@@ -34,7 +34,6 @@ else
 fi
 
 echo "# You typed in: $totalGenKeyPairs, will generate those now.";
-echo "# Format of the output is: ADDRESS;PRIVATE KEY;PUBLIC KEY";
 
 idx=0
 while [ $idx -lt $totalGenKeyPairs ]

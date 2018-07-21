@@ -1,6 +1,6 @@
 #!/bin/bash -x
 
-DEBUG=${DEBUG:-"false"}
+DEBUG=${DEBUG:-"true"}
 build_cmd="docker build "
 
 if [ "$DEBUG" != "true" ] ; then

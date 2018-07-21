@@ -32,4 +32,9 @@ RUN cd $HOME; \
     make && make install && make clean ;\
     cd $HOME; rm -rf sha3sum
 
-COPY eth-wallet-gen.sh $HOME/eth-wallet-gen.sh
+COPY _eth-wallet-gen.sh $HOME/_eth-wallet-gen.sh
+
+USER $ETH_UID
+WORKDIR $HOME
+
+CMD ["./_eth-wallet-gen.sh"]
