@@ -16,6 +16,7 @@ contract TokenTrader is SafeMath {
     // activate token exchange, we can shut this down anytime by 'owner'
     bool public allowTokenEx = true;
     uint256 public exchangeRate = 10**14;
+    uint256 decimals = 18;
 
     event ActivateSaleEvent(bool allowTokenEx);
     event ExchangeTokens(address indexed buyer, uint256 ethersSent, uint256 tokensBought);
@@ -50,9 +51,9 @@ contract TokenTrader is SafeMath {
 
     function takerBuyAsset() payable public {
         if (allowTokenEx || msg.sender == owner) {
-            require(msg.value > 0);
-            // Note that exchangeUnits has already been validated as > 0
-            uint256 tokens = safeDiv(safeMul(msg.value, 10**18), exchangeRate);
+            // Note that exchangeRate has already been validated as > 0
+            uint256 tokens = safeDiv(safeMul(msg.value, 10**decimals), exchangeRate);
+            require(tokens > 0);
             // ERC20Token contract will see the msg.sender as the 'TokenTrader contract' address
             // This means, you will need Token balance under THIS CONTRACT!!!!!!!!!!!!!!!!!!!!!!
             if (InterfaceERC20(exchanging_token_addr).transfer(msg.sender, tokens)) {
