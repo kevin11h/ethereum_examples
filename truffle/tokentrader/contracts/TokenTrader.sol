@@ -23,7 +23,7 @@ contract TokenTrader is SafeMath {
 
     modifier restricted() {
         if (msg.sender != owner) {
-            revert();
+            revert("caller not contract owner");
         }
         _;
     }
@@ -32,11 +32,11 @@ contract TokenTrader is SafeMath {
     * 
     */
     constructor(address _ex_tok_addr, bool enableTokenEx) public {
-        if (_ex_tok_addr == 0x0) revert();
+        if (_ex_tok_addr == 0x0) revert("cannot interact with null contract");
         owner = msg.sender;
         exchanging_token_addr = _ex_tok_addr;
         allowTokenEx = enableTokenEx;
-        if(exchangeRate < 0) revert();
+        if(exchangeRate < 0) revert("exchange rante cannot be negative");
         emit ActivateSaleEvent(enableTokenEx);
     }
 
@@ -49,11 +49,11 @@ contract TokenTrader is SafeMath {
         emit ActivateSaleEvent(flipTokenEx);
     }
 
-    function takerBuyAsset() payable public {
+    function takerBuyAsset() public payable {
         if (allowTokenEx || msg.sender == owner) {
             // Note that exchangeRate has already been validated as > 0
             uint256 tokens = safeDiv(safeMul(msg.value, 10**decimals), exchangeRate);
-            require(tokens > 0);
+            require(tokens > 0, "token overflow and ending with negative balance");
             // ERC20Token contract will see the msg.sender as the 'TokenTrader contract' address
             // This means, you will need Token balance under THIS CONTRACT!!!!!!!!!!!!!!!!!!!!!!
             if (InterfaceERC20(exchanging_token_addr).transfer(msg.sender, tokens)) {
@@ -62,11 +62,11 @@ contract TokenTrader is SafeMath {
         }
         else
         {
-            revert();
+            revert("token exchange disabled or you are not contract owner");
         }
     }
 
-    function () payable public {
+    function () public payable {
         takerBuyAsset();
     }
 

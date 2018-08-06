@@ -100,11 +100,11 @@ contract('ERC20TokenMint', function(accounts) {
     it("should have the contract name " + contractName + " and symbol " + tokenSymbol, function() {
       let tname;
       return erc20Tok.deployed(contractName, tokenSymbol).then(function(instance) {
-        pzoo = instance;
-        return pzoo.name.call();
+        erc20deployer = instance;
+        return erc20deployer.name.call();
       }).then(function(name) {
         tname = name;
-        return pzoo.symbol.call();
+        return erc20deployer.symbol.call();
       }).then(function(symbol) {
         assert.equal(symbol,"T02", "symbol is not T02");
         assert.equal(tname,"Test02Tok", "Contract name is not Test02Tok");
@@ -123,7 +123,7 @@ contract('ERC20TokenMint', function(accounts) {
      * transfer()
      */
     it("should transfer() and send coin without approval correctly", function() {
-      let pzoo;
+      let erc20deployer;
 
       //    Get initial balances of first and second account.
       let account_one = accounts[0];
@@ -137,25 +137,25 @@ contract('ERC20TokenMint', function(accounts) {
       let amount = 543;
 
       return erc20Tok.deployed(contractName,tokenSymbol).then(function(instance) {
-        pzoo = instance;
-        return pzoo.balanceOf.call(account_one);
+        erc20deployer = instance;
+        return erc20deployer.balanceOf.call(account_one);
       }).then(function(balance) {
         account_one_starting_balance = balance.toNumber();
         logging(account_one + " has starting balance " + account_one_starting_balance);
-        return pzoo.balanceOf.call(account_two);
+        return erc20deployer.balanceOf.call(account_two);
       }).then(function(balance) {
         account_two_starting_balance = balance.toNumber();
         logging(account_two + " has starting balance " + account_two_starting_balance);
-        return pzoo.transfer(account_two, amount);
+        return erc20deployer.transfer(account_two, amount);
       }).then(function() {
-        return pzoo.balanceOf.call(account_one);
+        return erc20deployer.balanceOf.call(account_one);
       }).then(function(balance) {
         account_one_ending_balance = balance.toNumber();
         contractCreatorRemainBalance -= amount;
         assert.equal(contractCreatorRemainBalance,
                     account_one_ending_balance,
                     "Amount wasn't correct for " + account_one);
-        return pzoo.balanceOf.call(account_two);
+        return erc20deployer.balanceOf.call(account_two);
       }).then(function(balance) {
         account_two_ending_balance = balance.toNumber();
         assert.equal(account_one_ending_balance,
@@ -171,7 +171,7 @@ contract('ERC20TokenMint', function(accounts) {
      * transferFrom()
      */
     it("should transferFrom() coin with approval correctly", function() {
-      let pzoo;
+      let erc20deployer;
 
       // Get initial balances of first and second account.
       let account_one = accounts[0];
@@ -185,34 +185,34 @@ contract('ERC20TokenMint', function(accounts) {
       let amount = 6789;
 
       return erc20Tok.deployed(contractName,tokenSymbol).then(function(instance) {
-        pzoo = instance;
-        return pzoo.balanceOf.call(account_one);
+        erc20deployer = instance;
+        return erc20deployer.balanceOf.call(account_one);
       }).then(function(balance) {
         account_one_starting_balance = balance.toNumber();
         assert.equal(account_one_starting_balance,
                     contractCreatorRemainBalance,
                     "first account should have remaining balance " + contractCreatorRemainBalance);
         logging(account_one + " has starting balance " + account_one_starting_balance);
-        return pzoo.balanceOf.call(account_two);
+        return erc20deployer.balanceOf.call(account_two);
       }).then(function(balance) {
         account_two_starting_balance = balance.toNumber();
         logging(account_two + " has starting balance " + account_two_starting_balance);
       }).then(function() {
-        return pzoo.approve(account_one, contractCreatorRemainBalance);
+        return erc20deployer.approve(account_one, contractCreatorRemainBalance);
       }).then(function(isapproved) {
         logging(isapproved);
         //assert.equal(isapproved, true, 
         //             account_one + " has been approved with spending balance " + contractOwnerBalance);
-        return pzoo.transferFrom(account_one, account_two, amount);
+        return erc20deployer.transferFrom(account_one, account_two, amount);
       }).then(function() {
-        return pzoo.balanceOf.call(account_one);
+        return erc20deployer.balanceOf.call(account_one);
       }).then(function(balance) {
         contractCreatorRemainBalance -= amount;
         account_one_ending_balance = balance.toNumber();
         assert.equal(contractCreatorRemainBalance,
                     account_one_ending_balance,
                     account_one + " should have remaining balance " + contractCreatorRemainBalance);
-        return pzoo.balanceOf.call(account_two);
+        return erc20deployer.balanceOf.call(account_two);
       }).then(function(balance) {
         account_two_ending_balance = balance.toNumber();
         logging(account_one + " has ending balance " + account_one_ending_balance);
